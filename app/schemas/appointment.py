@@ -19,6 +19,6 @@ class AppointmentUpdate(BaseModel):
 
 class AppointmentRead(AppointmentBase):
     appointment_id: int
-    created_at: Optional[str]
+    created_at: datetime
     class Config:
         orm_mode = True
