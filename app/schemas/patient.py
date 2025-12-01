@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 
 class PatientBase(BaseModel):
     first_name: str
@@ -19,7 +19,7 @@ class PatientUpdate(PatientBase):
 
 class PatientRead(PatientBase):
     patient_id: int
-    created_at: Optional[str]
+    created_at: Optional[datetime]
 
     class Config:
         orm_mode = True
