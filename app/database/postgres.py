@@ -14,3 +14,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+# Initialize all PostgreSQL tables
+def init_postgres():
+    from app.models.sql_models import Base #ensure models are imported
+    Base.metadata.create_all(bind=engine)
+    print("PostgreSQL tables initialized")
