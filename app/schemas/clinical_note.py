@@ -22,4 +22,4 @@ class ClinicalNoteCreate(BaseModel):
 
 class ClinicalNoteRead(ClinicalNoteCreate):
     _id: Optional[str]
-    created_at: Optional[datetime]
+    created_at: datetime
