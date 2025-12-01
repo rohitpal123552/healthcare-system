@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database.postgres import get_db
 from app.models.sql_models import Billing, Appointment
 from app.schemas.billing import BillingCreate, BillingRead
+from typing import List
 
 router = APIRouter(prefix="/billing", tags=["billing"])
 
@@ -24,7 +25,7 @@ def get_bill(bill_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Bill not found")
     return bill
 
-@router.get("/", response_model=list[BillingRead])
+@router.get("/", response_model=List[BillingRead])
 def list_bills(appointment_id: int = None, db: Session = Depends(get_db)):
     q = db.query(Billing)
     if appointment_id:
