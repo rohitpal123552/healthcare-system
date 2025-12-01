@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.postgres import get_db
 from app.models.sql_models import MedicalRecord, Patient
-from app.schemas.medical_record import MedicalRecordCreate, MedicalRecordRead, MedicalRecordUpdate
+from app.schemas.medical_records import MedicalRecordCreate, MedicalRecordRead, MedicalRecordUpdate
+from typing import List
 
 router = APIRouter(prefix="/medical_records", tags=["medical_records"])
 
@@ -25,7 +26,7 @@ def get_record(record_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Record not found")
     return rec
 
-@router.get("/", response_model=list[MedicalRecordRead])
+@router.get("/", response_model=List[MedicalRecordRead])
 def list_records(patient_id: int = None, db: Session = Depends(get_db)):
     q = db.query(MedicalRecord)
     if patient_id:
