@@ -3,6 +3,7 @@ from app.database.mongo import mongo_db
 from bson import ObjectId
 from app.schemas.imaging import ImagingCreate, ImagingRead
 from datetime import datetime
+from typing import List
 
 router = APIRouter(prefix="/imaging", tags=["imaging"])
 
@@ -24,7 +25,7 @@ def get_image(image_id: str):
     doc["_id"] = str(doc["_id"])
     return doc
 
-@router.get("/", response_model=list[ImagingRead])
+@router.get("/", response_model=List[ImagingRead])
 def list_images(patient_id: int = None, limit: int = 50):
     coll = mongo_db.imaging
     q = {}
