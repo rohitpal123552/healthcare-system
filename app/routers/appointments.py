@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database.postgres import get_db
 from app.models.sql_models import Appointment, Patient, Doctor
 from app.schemas.appointment import AppointmentCreate, AppointmentRead, AppointmentUpdate
+from typing import List
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
 
@@ -27,7 +28,7 @@ def get_appointment(appointment_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Appointment not found")
     return appt
 
-@router.get("/", response_model=list[AppointmentRead])
+@router.get("/", response_model=List[AppointmentRead])
 def list_appointments(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
     return db.query(Appointment).offset(skip).limit(limit).all()
 
