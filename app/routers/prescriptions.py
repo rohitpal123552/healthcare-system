@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database.postgres import get_db
 from app.models.sql_models import Prescription, Appointment
 from app.schemas.prescription import PrescriptionCreate, PrescriptionRead
+from typing import List
 
 router = APIRouter(prefix="/prescriptions", tags=["prescriptions"])
 
@@ -24,7 +25,7 @@ def get_prescription(prescription_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Prescription not found")
     return pr
 
-@router.get("/", response_model=list[PrescriptionRead])
+@router.get("/", response_model=List[PrescriptionRead])
 def list_prescriptions(appointment_id: int = None, db: Session = Depends(get_db)):
     q = db.query(Prescription)
     if appointment_id:
