@@ -3,6 +3,7 @@ from app.database.mongo import mongo_db
 from app.schemas.clinical_note import ClinicalNoteCreate, ClinicalNoteRead
 from bson import ObjectId
 from datetime import datetime
+from typing import List
 
 router = APIRouter(prefix="/clinical_notes", tags=["clinical_notes"])
 
@@ -24,7 +25,7 @@ def get_note(note_id: str):
     doc['_id'] = str(doc['_id'])
     return doc
 
-@router.get("/", response_model=list[ClinicalNoteRead])
+@router.get("/", response_model=List[ClinicalNoteRead])
 def list_notes(patient_id: int = None, limit: int = 50):
     coll = mongo_db.clinical_notes
     q = {}
