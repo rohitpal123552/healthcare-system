@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime
 
 class ImagingCreate(BaseModel):
     patient_id: int
@@ -9,4 +10,4 @@ class ImagingCreate(BaseModel):
 
 class ImagingRead(ImagingCreate):
     _id: Optional[str]
-    created_at: Optional[str]
+    created_at: datetime
