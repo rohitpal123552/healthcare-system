@@ -1,7 +1,8 @@
+# app/routers/medical_records.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.postgres import get_db
-from app.models.sql_models import MedicalRecord, Patient
+from app.models.sql_models import MedicalRecord, Patient, Doctor, Appointment
 from app.schemas.medical_records import MedicalRecordCreate, MedicalRecordRead, MedicalRecordUpdate
 from typing import List
 
@@ -9,11 +10,41 @@ router = APIRouter(prefix="/medical_records", tags=["medical_records"])
 
 @router.post("/", response_model=MedicalRecordRead)
 def create_record(payload: MedicalRecordCreate, db: Session = Depends(get_db)):
-    # check patient exists
-    if not db.query(Patient).filter(Patient.patient_id == payload.patient_id).first():
+    # Validate patient
+    patient = db.query(Patient).filter(Patient.patient_id == payload.patient_id).first()
+    if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
-    record = MedicalRecord(**payload.dict())
+    # validate appointment
+    appointment = db.query(Appointment).filter(Appointment.appointment_id == payload.appointment_id).first()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    # # Optional: validate appointment if provided
+    # appointment = None
+    # if payload.appointment_id:
+    #     appointment = db.query(Appointment).filter(Appointment.appointment_id == payload.appointment_id).first()
+    #     if not appointment:
+    #         raise HTTPException(status_code=404, detail="Appointment not found")
+
+    # validate doctor
+    doctor = db.query(Doctor).filter(Doctor.doctor_id == payload.doctor_id).first()
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+        
+    # # Optional: validate doctor if provided
+    # if payload.doctor_id:
+    #     doctor = db.query(Doctor).filter(Doctor.doctor_id == payload.doctor_id).first()
+    #     if not doctor:
+    #         raise HTTPException(status_code=404, detail="Doctor not found")
+
+    record = MedicalRecord(
+        patient_id=payload.patient_id,
+        appointment_id=payload.appointment_id,
+        doctor_id=payload.doctor_id,
+        title=payload.title,
+        summary=payload.summary
+    )
     db.add(record)
     db.commit()
     db.refresh(record)
@@ -31,7 +62,7 @@ def list_records(patient_id: int = None, db: Session = Depends(get_db)):
     q = db.query(MedicalRecord)
     if patient_id:
         q = q.filter(MedicalRecord.patient_id == patient_id)
-    return q.all()
+    return q.order_by(MedicalRecord.created_at.desc()).limit(200).all()
 
 @router.put("/{record_id}", response_model=MedicalRecordRead)
 def update_record(record_id: int, payload: MedicalRecordUpdate, db: Session = Depends(get_db)):

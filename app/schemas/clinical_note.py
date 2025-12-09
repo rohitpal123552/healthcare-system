@@ -1,5 +1,6 @@
+# app/schemas/clinical_note.pyf
 from pydantic import BaseModel
-from typing import Optional, List, Any
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 
 class Observation(BaseModel):
@@ -8,8 +9,8 @@ class Observation(BaseModel):
     ts: Optional[datetime]
 
 class Attachment(BaseModel):
-    type: str
-    path: str
+    file_name: str
+    file_url: str
     caption: Optional[str]
 
 class ClinicalNoteCreate(BaseModel):
@@ -17,9 +18,10 @@ class ClinicalNoteCreate(BaseModel):
     patient_id: int
     doctor_id: int
     note_text: str
-    observations: Optional[List[Observation]] = []
+    observations: Optional[Dict[str, Any]] = {}
     attachments: Optional[List[Attachment]] = []
 
 class ClinicalNoteRead(ClinicalNoteCreate):
     _id: Optional[str]
+    record_uuid: str
     created_at: datetime

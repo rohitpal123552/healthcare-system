@@ -1,7 +1,8 @@
+# app/routers/prescriptions.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.postgres import get_db
-from app.models.sql_models import Prescription, Appointment
+from app.models.sql_models import Prescription, MedicalRecord
 from app.schemas.prescription import PrescriptionCreate, PrescriptionRead
 from typing import List
 
@@ -9,10 +10,16 @@ router = APIRouter(prefix="/prescriptions", tags=["prescriptions"])
 
 @router.post("/", response_model=PrescriptionRead)
 def create_prescription(payload: PrescriptionCreate, db: Session = Depends(get_db)):
-    if not db.query(Appointment).filter(Appointment.appointment_id == payload.appointment_id).first():
-        raise HTTPException(status_code=404, detail="Appointment not found")
+    record = db.query(MedicalRecord).filter(MedicalRecord.record_id == payload.record_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="Medical record (encounter) not found")
 
-    pr = Prescription(**payload.dict())
+    pr = Prescription(
+        record_id=payload.record_id, 
+        medication=payload.medication,
+        dosage=payload.dosage, 
+        instructions=payload.instructions
+        )
     db.add(pr)
     db.commit()
     db.refresh(pr)
