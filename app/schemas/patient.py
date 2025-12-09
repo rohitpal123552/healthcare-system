@@ -6,8 +6,8 @@ class PatientBase(BaseModel):
     first_name: str
     last_name: str
     date_of_birth: Optional[date]
-    gender: Optional[str]
-    phone: Optional[str]
+    gender: str
+    phone: str
     email: Optional[EmailStr]
     address: Optional[str]
 

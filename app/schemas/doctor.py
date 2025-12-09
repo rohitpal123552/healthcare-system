@@ -4,8 +4,8 @@ from typing import Optional
 class DoctorBase(BaseModel):
     first_name: str
     last_name: str
-    specialty: Optional[str]
-    phone: Optional[str]
+    specialty: str
+    phone: str
     email: Optional[EmailStr]
 
 class DoctorCreate(DoctorBase):

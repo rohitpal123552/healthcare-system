@@ -1,3 +1,4 @@
+# app/schemas/appointment.py
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -6,7 +7,7 @@ class AppointmentBase(BaseModel):
     patient_id: int
     doctor_id: int
     appointment_ts: datetime
-    reason: Optional[str]
+    reason: str
     status: Optional[str] = 'scheduled'
 
 class AppointmentCreate(AppointmentBase):
@@ -20,5 +21,6 @@ class AppointmentUpdate(BaseModel):
 class AppointmentRead(AppointmentBase):
     appointment_id: int
     created_at: datetime
+
     class Config:
         orm_mode = True
